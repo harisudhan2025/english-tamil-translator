@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>English to Tamil Translator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_clean.css') }}">  
+</head>
+<body>
+    <div class="container">
+        <button class="toggle-btn" onclick="toggleDarkMode()">🌙</button>
+        <h2>English to Tamil Translator</h2>
+        <form method="post" onsubmit="showLoading()">
+            <textarea name="english" placeholder="Enter English text">{{ request.form.get('english','') }}</textarea>
+
+            <br><br>
+            <button type="submit" id="translateBtn">Translate</button>
+            <p id="loadingText" style="display:none; text-align:center; margin-top:10px;">
+              Translating…
+            </p>
+        </form>
+        <br>
+        <textarea
+            id="tamilText"
+            readonly
+            placeholder="Tamil translation"
+        >{{ translation }}</textarea>
+
+        <button
+           type="button"
+           class="copy-btn"
+           onclick="copyTamil()"
+        >
+           Copy
+        </button>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+    <script>
+function showLoading() {
+    const btn = document.getElementById("translateBtn");
+    btn.disabled = true;
+    btn.innerText = "Please wait...";
+    document.getElementById("loadingText").style.display = "block";
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("darkMode", "on");
+    } else {
+        localStorage.setItem("darkMode", "off");
+    }
+}
+
+window.onload = function () {
+    if (localStorage.getItem("darkMode") === "on") {
+        document.body.classList.add("dark");
+    }
+};
+
+function copyTamil() {
+    const text = document.getElementById("tamilText").value;
+
+    if (!text.trim()) {
+        alert("Nothing to copy!");
+        return;
+    }
+
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector(".copy-btn");
+        btn.innerText = "Copied ✓";
+        setTimeout(() => btn.innerText = "Copy", 1500);
+    });
+}
+</script>
+</body>
+</html>
